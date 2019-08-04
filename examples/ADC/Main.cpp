@@ -5,6 +5,7 @@
 #include <cstring>
 
 using hal::sys_tick;
+using hal::sys_clock;
 using namespace hal::gpio;
 using namespace hal::usart;
 using namespace hal::adc;
@@ -23,9 +24,6 @@ template<> void handler<interrupt::USART2>()
     serial::isr();
 }
 
-extern "C" int ll_main();
-extern "C" void minimal_init();
-
 int main()
 {
     ld4::setup();
@@ -38,8 +36,10 @@ int main()
     stdio_t::bind<serial>();
     printf("Welcome to the STM32G431!\n");
 
+    d2::toggle();
+    sys_clock::delay_us(10);
+    d2::toggle();
     adc::setup();
-    minimal_init();
 
     for (;;)
         loop();

@@ -209,7 +209,84 @@ void minimal_init()
   //LL_ADC_EnableIT_OVR(ADC1);
   /* USER CODE END ADC1_Init 2 */
 
-  Activate_ADC();
+  //__IO uint32_t wait_loop_index = 0U;
+  
+  /*## Operation on ADC hierarchical scope: ADC instance #####################*/
+  
+  /* Note: Hardware constraint (refer to description of the functions         */
+  /*       below):                                                            */
+  /*       On this STM32 serie, setting of these features is conditioned to   */
+  /*       ADC state:                                                         */
+  /*       ADC must be disabled.                                              */
+  /* Note: In this example, all these checks are not necessary but are        */
+  /*       implemented anyway to show the best practice usages                */
+  /*       corresponding to reference manual procedure.                       */
+  /*       Software can be optimized by removing some of these checks, if     */
+  /*       they are not relevant considering previous settings and actions    */
+  /*       in user application.                                               */
+    /* Disable ADC deep power down (enabled by default after reset state) */
+    //LL_ADC_DisableDeepPowerDown(ADC1);
+    
+    /* Enable ADC internal voltage regulator */
+    //LL_ADC_EnableInternalRegulator(ADC1);
+    
+    /* Delay for ADC internal voltage regulator stabilization.                */
+    /* Compute number of CPU cycles to wait for, from delay in us.            */
+    /* Note: Variable divided by 2 to compensate partially                    */
+    /*       CPU processing cycles (depends on compilation optimization).     */
+    /* Note: If system core clock frequency is below 200kHz, wait time        */
+    /*       is only a few CPU processing cycles.                             */
+
+    /*
+    const uint32_t SystemCoreClock = 170000000;
+    wait_loop_index = ((LL_ADC_DELAY_INTERNAL_REGUL_STAB_US * (SystemCoreClock / (100000 * 2))) / 10);
+    while(wait_loop_index != 0)
+    {
+      wait_loop_index--;
+    }
+    */
+    
+    /* Run ADC self calibration */
+    //LL_ADC_StartCalibration(ADC1, LL_ADC_SINGLE_ENDED);
+    
+    /* Poll for ADC effectively calibrated */
+    
+    //while (LL_ADC_IsCalibrationOnGoing(ADC1) != 0);
+    
+    /* Delay between ADC end of calibration and ADC enable.                   */
+    /* Note: Variable divided by 2 to compensate partially                    */
+    /*       CPU processing cycles (depends on compilation optimization).     */
+  /*
+    wait_loop_index = (ADC_DELAY_CALIB_ENABLE_CPU_CYCLES >> 1);
+    while(wait_loop_index != 0)
+    {
+      wait_loop_index--;
+    }
+   */ 
+    /* Enable ADC */
+   // LL_ADC_Enable(ADC1);
+    
+    /* Poll for ADC ready to convert */
+    
+    //while (LL_ADC_IsActiveFlag_ADRDY(ADC1) == 0);
+    
+    /* Note: ADC flag ADRDY is not cleared here to be able to check ADC       */
+    /*       status afterwards.                                               */
+    /*       This flag should be cleared at ADC Deactivation, before a new    */
+    /*       ADC activation, using function "LL_ADC_ClearFlag_ADRDY()".       */
+  
+  /*## Operation on ADC hierarchical scope: ADC group regular ################*/
+  /* Note: No operation on ADC group regular performed here.                  */
+  /*       ADC group regular conversions to be performed after this function  */
+  /*       using function:                                                    */
+  /*       "LL_ADC_REG_StartConversion();"                                    */
+  
+  /*## Operation on ADC hierarchical scope: ADC group injected ###############*/
+  /* Note: No operation on ADC group injected performed here.                 */
+  /*       ADC group injected conversions to be performed after this function */
+  /*       using function:                                                    */
+  /*       "LL_ADC_INJ_StartConversion();"                                    */
+  
 }
 
 int ll_main(void)
