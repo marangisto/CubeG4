@@ -1,14 +1,17 @@
 #include <stdlib.h>
 #include <usart.h>
+#include <adc.h>
 #include <redirect.h>
 #include <cstring>
 
 using hal::sys_tick;
 using namespace hal::gpio;
 using namespace hal::usart;
+using namespace hal::adc;
 
 typedef usart_t<2, PA2, PA3> serial;
 typedef output_t<PA5> ld4;
+typedef adc_t adc;
 
 void loop();
 
@@ -19,7 +22,6 @@ template<> void handler<interrupt::USART2>()
 }
 
 extern "C" int ll_main();
-extern "C" uint16_t runConversion();
 
 int main()
 {
@@ -44,10 +46,11 @@ void loop()
     printf("> \n");
     if (fgets(buf, sizeof(buf), stdin))
     {
-        uint16_t x = runConversion();
+        adc::start_conversion();
+        while (!adc::end_of_conversion());
+        uint16_t y = adc::read();
 
-        buf[strcspn(buf, "\r\n")] = 0;
-        printf("got = '%s' and %d\n", buf, x);
+        printf("adc = %d\n", y);
     }
 }
 

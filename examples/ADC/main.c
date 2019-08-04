@@ -264,6 +264,14 @@ uint16_t runConversion()
   /* USER CODE END 3 */
 }
 
+uint16_t runConversionMinimal()
+{
+    LL_ADC_REG_StartConversion(ADC1);
+    while (!LL_ADC_IsActiveFlag_EOC(ADC1));   // wait for EOC
+    return LL_ADC_REG_ReadConversionData12(ADC1);
+}
+
+
 /**
   * @brief System Clock Configuration
   * @retval None
