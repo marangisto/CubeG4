@@ -1,0 +1,3 @@
+BASE_DIR=../../..
+MCU=STM32G431
+LIBS=hal CubeG4
