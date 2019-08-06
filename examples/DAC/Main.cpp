@@ -24,8 +24,6 @@ template<> void handler<interrupt::USART2>()
     serial::isr();
 }
 
-extern "C" void dac1_init();
-
 int main()
 {
     ld4::setup();
@@ -39,7 +37,6 @@ int main()
     printf("Welcome to the STM32G431!\n");
 
     dac::setup();
-    dac1_init();
 
     for (;;)
         loop();

@@ -197,12 +197,6 @@ void SystemClock_Config(void)
 }
 
 
-void dac1_init()
-{
-    MX_DAC1_Init();
-    Activate_DAC();
-}
-
 /**
   * @brief DAC1 Initialization Function
   * @param None
