@@ -11,23 +11,18 @@ using namespace hal::usart;
 using namespace hal::dac;
 
 typedef usart_t<2, PA2, PA3> serial;
-typedef output_t<PA5> ld4;
 typedef output_t<PA10> d2;
-typedef analog_t<PA0> ain;
-typedef dac_t dac;
+typedef dac_t<1> dac;
 
 void loop();
 
 template<> void handler<interrupt::USART2>()
 {
-    ld4::toggle();
     serial::isr();
 }
 
 int main()
 {
-    ld4::setup();
-    ain::setup();
     d2::setup();
     serial::setup<230400>();
     hal::nvic<interrupt::USART2>::enable();
@@ -37,6 +32,8 @@ int main()
     printf("Welcome to the STM32G431!\n");
 
     dac::setup();
+    dac::enable<1>();
+    dac::enable<2>();
 
     for (;;)
         loop();
@@ -58,7 +55,10 @@ void loop()
         printf("dac = %d\n", x);
 
         d2::toggle();
-        dac::write<0>(x);
+        dac::write<1>(x);
+        dac::trigger<1>();
+        dac::write<2>(4095 - x);
+        dac::trigger<2>();
         sys_clock::delay_us(100);
         d2::toggle();
     }
