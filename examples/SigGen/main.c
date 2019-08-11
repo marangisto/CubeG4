@@ -48,9 +48,6 @@ typedef enum
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-DAC_HandleTypeDef hdac1;
-DMA_HandleTypeDef hdma_dac1_ch1;
-
 
 /* USER CODE BEGIN PV */
 __IO uint8_t ubKeyPressed = RESET;
@@ -74,7 +71,7 @@ static void DAC_ChangeWave(t_wavetype wave);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-extern void fragment_a();
+extern void aux_main();
 
 /* USER CODE END 0 */
 
@@ -84,52 +81,15 @@ extern void fragment_a();
   */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  fragment_a();
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  /* USER CODE BEGIN 2 */
-  /* Configure LED2 */
-  //BSP_LED_Init(LED2);
-  /* Configure User push-button in Interrupt mode */
+  aux_main();
   BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
-  
-  
-  /*## Start DAC conversions ###############################################*/
-  /* Start DAC wave generation */
-  /*
-  */
-        config_wave();
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   BSP_LED_On(LED2);
   while (1)
   {
-    /* If the Key is pressed */
     if (ubKeyPressed != RESET)
     {
-      /* select waves forms according to the User push-button status */
       if (ubSelectedWavesForm == DAC_WAVE_SAWTOOTH) ubSelectedWavesForm = DAC_WAVE_SINE;
       else ubSelectedWavesForm = DAC_WAVE_SAWTOOTH;
       
@@ -137,12 +97,7 @@ int main(void)
 
       ubKeyPressed = RESET;
     }
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-
   }
-  /* USER CODE END 3 */
 }
 
 /**
@@ -191,13 +146,11 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 extern void wave_change(int sine, uint16_t *p, uint16_t nel);
-extern void debug_print(const char *s, uint32_t x);
 
 static void DAC_ChangeWave(t_wavetype wave)
 {
     wave_change(wave == DAC_WAVE_SINE, sinewave, 60);
 }
-
 
 /**
   * @brief EXTI line detection callbacks
